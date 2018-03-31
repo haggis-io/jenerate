@@ -40,8 +40,12 @@ func SearchAction() cli.ActionFunc {
 				return cli.NewExitError("Can't connect to the registry.", 1)
 
 			default:
-				return cli.NewExitError("No document exist with that name or the document is hasn't been accepted yet...", 1)
+				return cli.NewExitError(fmt.Sprintf("something went wrong, %s", err), 1)
 			}
+		}
+
+		if len(docVers) == 0 {
+			return cli.NewExitError("No document exist with that name or the document is hasn't been accepted yet...", 1)
 		}
 
 		fmt.Printf("Document: %s\n", name)
