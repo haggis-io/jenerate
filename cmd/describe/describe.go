@@ -1,7 +1,6 @@
-package search
+package describe
 
 import (
-	"fmt"
 	"github.com/haggis-io/jenerate/cmd/errors"
 	"github.com/haggis-io/jenerate/pkg/render"
 	"github.com/haggis-io/jenerate/pkg/service"
@@ -12,12 +11,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func SearchAction() cli.ActionFunc {
+func DescribeAction() cli.ActionFunc {
 
 	return func(context *cli.Context) error {
 
 		if context.NArg() < 1 {
-			return errors.MissingDocumentSearchArgErr
+			return errors.MissingDocumentDescribeArgErr
 		}
 
 		cc, err := grpc.Dial(context.GlobalString("registry"), grpc.WithInsecure())
@@ -31,15 +30,21 @@ func SearchAction() cli.ActionFunc {
 		var (
 			registryClient  = api.NewRegistryClient(cc)
 			name            = context.Args().First()
+			version         = context.Args().Get(1)
 			documentService = service.NewDocumentService(registryClient)
 		)
 
-		docVers, err := documentService.GetAll(name)
+		if version == "" {
+			return errors.MissingVersionArgErr
+		}
+
+		doc, err := documentService.Get(name, version)
 
 		if err != nil {
 			switch status.Code(err) {
 			case codes.Unavailable:
 				return errors.RegistryUnavaliableErr
+
 			case codes.NotFound:
 				return errors.DocumentNotFoundErr
 			default:
@@ -47,12 +52,9 @@ func SearchAction() cli.ActionFunc {
 			}
 		}
 
-		fmt.Printf("Document: %s\n", name)
-		fmt.Println("Avaliable versions:")
-
 		render.GetRenderer(
 			context.String("output")).
-			PrettyPrint(docVers)
+			PrettyPrint(doc)
 
 		return nil
 

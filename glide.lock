@@ -1,5 +1,5 @@
 hash: 90abf0daee501adcd7cfe8cd8f20f300be8d9696cc041055c2d2b041ed537ba8
-updated: 2018-03-31T18:01:07.211942+02:00
+updated: 2018-04-01T23:47:04.536934+02:00
 imports:
 - name: github.com/golang/protobuf
   version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
@@ -13,6 +13,8 @@ imports:
   version: 55fb4ce35f9cd8c4f4655449896ca7e8f929c573
   subpackages:
   - pkg/api
+- name: github.com/sanity-io/litter
+  version: ae543b7ba8fd6af63e4976198f146e1348ae53c1
 - name: github.com/sirupsen/logrus
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/urfave/cli

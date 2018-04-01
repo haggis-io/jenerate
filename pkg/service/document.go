@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/haggis-io/jenerate/cmd/errors"
 	"github.com/haggis-io/registry/pkg/api"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"time"
 )
 
@@ -40,9 +43,10 @@ func (d *documentService) GetAll(name string) (out []string, err error) {
 
 	if docsRes != nil && len(docsRes.Documents) > 0 {
 		out = ExtractVersionsFromDocumentSlice(docsRes.Documents)
+		return
 	}
 
-	return
+	return out, status.Error(codes.NotFound, errors.DocumentNotFoundErr.Error())
 }
 
 func (d *documentService) Get(name, version string) (*api.Document, error) {
