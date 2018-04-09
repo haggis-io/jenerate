@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/haggis-io/jenerate/cmd/errors"
 	"github.com/haggis-io/registry/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -10,8 +9,9 @@ import (
 )
 
 type DocumentService interface {
-	GetAll(name string) (out []string, err error)
-	Get(name, version string) (*api.Document, error)
+	Get(name string) (out []*api.Document, err error)
+	GetStrict(name, version string) (*api.Document, error)
+	GetAll(documents ...*api.Document) (out []*api.Document, err error)
 }
 
 type documentService struct {
@@ -24,7 +24,7 @@ func NewDocumentService(client api.RegistryClient) DocumentService {
 	}
 }
 
-func (d *documentService) GetAll(name string) (out []string, err error) {
+func (d *documentService) Get(name string) (out []*api.Document, err error) {
 
 	req := api.GetDocumentsRequest{
 		Name:   name,
@@ -42,14 +42,14 @@ func (d *documentService) GetAll(name string) (out []string, err error) {
 	}
 
 	if docsRes != nil && len(docsRes.Documents) > 0 {
-		out = ExtractVersionsFromDocumentSlice(docsRes.Documents)
+		out = docsRes.GetDocuments()
 		return
 	}
 
-	return out, status.Error(codes.NotFound, errors.DocumentNotFoundErr.Error())
+	return out, status.Error(codes.NotFound, "")
 }
 
-func (d *documentService) Get(name, version string) (*api.Document, error) {
+func (d *documentService) GetStrict(name, version string) (*api.Document, error) {
 
 	req := api.GetDocumentRequest{
 		Name:    name,
@@ -67,4 +67,26 @@ func (d *documentService) Get(name, version string) (*api.Document, error) {
 	}
 
 	return docRes.GetDocument(), nil
+}
+
+func (d *documentService) GetAll(documents ...*api.Document) ([]*api.Document, error) {
+	var out []*api.Document
+
+	for _, document := range documents {
+		if document.Version == "" {
+			//TODO
+			return out, nil
+		}
+
+		doc, err := d.GetStrict(document.Name, document.Version)
+
+		if err != nil {
+			return out, err
+		}
+
+		out = append(out, doc)
+
+	}
+
+	return out, nil
 }

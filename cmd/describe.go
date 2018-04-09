@@ -1,22 +1,19 @@
-package describe
+package cmd
 
 import (
-	"github.com/haggis-io/jenerate/cmd/errors"
 	"github.com/haggis-io/jenerate/pkg/render"
 	"github.com/haggis-io/jenerate/pkg/service"
 	"github.com/haggis-io/registry/pkg/api"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func DescribeAction() cli.ActionFunc {
 
-	return func(context *cli.Context) error {
+	return func(context *cli.Context) (err error) {
 
 		if context.NArg() < 1 {
-			return errors.MissingDocumentDescribeArgErr
+			return MissingDocumentDescribeArgErr
 		}
 
 		cc, err := grpc.Dial(context.GlobalString("registry"), grpc.WithInsecure())
@@ -35,21 +32,13 @@ func DescribeAction() cli.ActionFunc {
 		)
 
 		if version == "" {
-			return errors.MissingVersionArgErr
+			return MissingVersionArgErr
 		}
 
-		doc, err := documentService.Get(name, version)
+		doc, err := documentService.GetStrict(name, version)
 
 		if err != nil {
-			switch status.Code(err) {
-			case codes.Unavailable:
-				return errors.RegistryUnavaliableErr
-
-			case codes.NotFound:
-				return errors.DocumentNotFoundErr
-			default:
-				return errors.GenericExitErr(err)
-			}
+			return err
 		}
 
 		render.GetRenderer(

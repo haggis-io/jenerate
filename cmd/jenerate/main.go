@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/haggis-io/jenerate/cmd"
-	"github.com/sanity-io/litter"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
@@ -21,8 +20,6 @@ var (
 
 func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
-	litter.Config.HidePrivateFields = true
-	litter.Config.StripPackageNames = true
 }
 
 func main() {
