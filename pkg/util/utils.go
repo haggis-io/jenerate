@@ -12,7 +12,18 @@ var (
 func ExtractVersionsFromDocumentSlice(docs []*api.Document) []string {
 	var out []string
 	for _, doc := range docs {
-		out = append(out, doc.Version)
+		out = append(out, doc.GetVersion())
+	}
+
+	return out
+}
+
+func JustNameAndVersionFromDocuments(docs []*api.Document) (out []*api.Document) {
+	for _, doc := range docs {
+		out = append(out, &api.Document{
+			Name:    doc.GetName(),
+			Version: doc.GetVersion(),
+		})
 	}
 
 	return out
