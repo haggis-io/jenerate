@@ -2,7 +2,10 @@ package util
 
 import (
 	"errors"
+	"github.com/haggis-io/jenerate/pkg/pipeline"
 	"github.com/haggis-io/registry/pkg/api"
+	"os"
+	"text/template"
 )
 
 var (
@@ -27,6 +30,23 @@ func JustNameAndVersionFromDocuments(docs []*api.Document) (out []*api.Document)
 	}
 
 	return out
+}
+
+func PrintPipeline(order []string) error {
+	out := pipeline.Pipeline{
+		Stages: make([]string, 0),
+	}
+	for _, e := range order {
+		if pipeline.LibraryRegex.MatchString(e) {
+			out.Library = e
+		} else {
+			out.Stages = append(out.Stages, e)
+		}
+	}
+
+	tmpl := template.Must(template.New("").Parse(pipeline.PipelineTemplate))
+
+	return tmpl.Execute(os.Stdout, out)
 }
 
 func ConstructDocumentOrder(document *api.Document) ([]string, error) {

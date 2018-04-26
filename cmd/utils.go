@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/haggis-io/jenerate/pkg/util"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc/codes"
@@ -30,4 +31,8 @@ func HandleErr(actionFunc cli.ActionFunc) cli.ActionFunc {
 		return nil
 
 	}
+}
+
+func CreateFlagName(full, short string) string {
+	return fmt.Sprintf("%s, %s", full, short)
 }

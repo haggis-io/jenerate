@@ -5,6 +5,16 @@ import (
 	"github.com/urfave/cli"
 )
 
+const (
+	RegistryGlobalFlag      = "registry"
+	RegistryGlobalShortFlag = "r"
+	OutputFlag              = "output"
+	OutputShortFlag         = "o"
+	OutputFlagUsage         = "Output format `[json|plain]`"
+	AllFlag                 = "all"
+	AllShortFlag            = "a"
+)
+
 var BaseCommands = []cli.Command{
 	{
 		Name:        "create",
@@ -12,13 +22,6 @@ var BaseCommands = []cli.Command{
 		Usage:       "Creates a Jenkinsfile from documents",
 		Description: "Creates a Jenkinsfile from document snippets",
 		ArgsUsage:   "NAME:VERSION NAME:VERSION...",
-		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "output, o",
-				Usage: "Output format `[json|plain]`",
-				Value: render.Plain,
-			},
-		},
 	},
 	{
 		Name:        "search",
@@ -28,12 +31,12 @@ var BaseCommands = []cli.Command{
 		ArgsUsage:   "NAME",
 		Flags: []cli.Flag{
 			cli.StringFlag{
-				Name:  "output, o",
-				Usage: "Output format `[json|plain]`",
+				Name:  CreateFlagName(OutputFlag, OutputShortFlag),
+				Usage: OutputFlagUsage,
 				Value: render.Plain,
 			},
 			cli.BoolFlag{
-				Name:  "all, a",
+				Name:  CreateFlagName(AllFlag, AllShortFlag),
 				Usage: "Print list of all documents stored in the registry",
 			},
 		},
@@ -46,8 +49,8 @@ var BaseCommands = []cli.Command{
 		ArgsUsage:   "NAME VERSION",
 		Flags: []cli.Flag{
 			cli.StringFlag{
-				Name:  "output, o",
-				Usage: "Output format `[json|plain]`",
+				Name:  CreateFlagName(OutputFlag, OutputShortFlag),
+				Usage: OutputFlagUsage,
 				Value: render.Plain,
 			},
 		},
