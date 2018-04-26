@@ -32,6 +32,10 @@ var BaseCommands = []cli.Command{
 				Usage: "Output format `[json|plain]`",
 				Value: render.Plain,
 			},
+			cli.BoolFlag{
+				Name:  "all, a",
+				Usage: "Print list of all documents stored in the registry",
+			},
 		},
 	},
 	{

@@ -72,6 +72,22 @@ func (d *documentService) GetStrict(name, version string) (*api.Document, error)
 func (d *documentService) GetAll(documents ...*api.Document) ([]*api.Document, error) {
 	var out []*api.Document
 
+	if len(documents) == 0 {
+		ctx, cancelFunc := context.WithTimeout(context.Background(), 15*time.Second)
+
+		defer cancelFunc()
+
+		docRes, err := d.client.GetDocuments(ctx, &api.GetDocumentsRequest{
+			Status: api.Status_APPROVED,
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		return docRes.GetDocuments(), nil
+	}
+
 	for _, document := range documents {
 		if document.Version == "" {
 			//TODO

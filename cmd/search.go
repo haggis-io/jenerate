@@ -14,7 +14,9 @@ func SearchAction() cli.ActionFunc {
 
 	return func(context *cli.Context) error {
 
-		if context.NArg() < 1 {
+		all := context.Bool("all")
+
+		if context.NArg() < 1 && !all {
 			return MissingDocumentSearchArgErr
 		}
 
@@ -31,6 +33,19 @@ func SearchAction() cli.ActionFunc {
 			name            = context.Args().First()
 			documentService = service.NewDocumentService(registryClient)
 		)
+
+		if all {
+			docs, err := documentService.GetAll()
+
+			if err != nil {
+				return err
+			}
+
+			render.GetRenderer(
+				context.String("output")).
+				PrettyPrint(util.JustNameAndVersionFromDocuments(docs))
+			return nil
+		}
 
 		docs, err := documentService.Get(name)
 
