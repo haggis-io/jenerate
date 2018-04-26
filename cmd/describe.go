@@ -16,7 +16,7 @@ func DescribeAction() cli.ActionFunc {
 			return MissingDocumentDescribeArgErr
 		}
 
-		cc, err := grpc.Dial(context.GlobalString("registry"), grpc.WithInsecure())
+		cc, err := grpc.Dial(context.GlobalString(RegistryGlobalFlag), grpc.WithInsecure())
 
 		if err != nil {
 			return err
@@ -42,7 +42,7 @@ func DescribeAction() cli.ActionFunc {
 		}
 
 		render.GetRenderer(
-			context.String("output")).
+			context.String(OutputFlag)).
 			PrettyPrint(doc)
 
 		return nil

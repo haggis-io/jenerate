@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/haggis-io/jenerate/pkg/render"
 	"github.com/haggis-io/jenerate/pkg/service"
 	"github.com/haggis-io/jenerate/pkg/util"
 	"github.com/haggis-io/registry/pkg/api"
@@ -17,7 +16,7 @@ func CreateAction() cli.ActionFunc {
 			return MissingDocumentDescribeArgErr
 		}
 
-		cc, err := grpc.Dial(context.GlobalString("registry"), grpc.WithInsecure())
+		cc, err := grpc.Dial(context.GlobalString(RegistryGlobalFlag), grpc.WithInsecure())
 
 		if err != nil {
 			return err
@@ -61,11 +60,6 @@ func CreateAction() cli.ActionFunc {
 			snippetOrder = append(snippetOrder, snippets...)
 		}
 
-		render.GetRenderer(
-			context.String("output")).
-			PrettyPrint(snippetOrder)
-
-		return nil
-
+		return util.PrintPipeline(snippetOrder)
 	}
 }

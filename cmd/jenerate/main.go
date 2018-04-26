@@ -30,7 +30,7 @@ func main() {
 	app.Version = fmt.Sprintf("%s (%s)", version, commit)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:   "registry, r",
+			Name:   cmd.CreateFlagName(cmd.RegistryGlobalFlag, cmd.RegistryGlobalShortFlag),
 			Usage:  "Registry address",
 			Value:  "127.0.0.1:8080",
 			EnvVar: "REGISTRY_ADDR",

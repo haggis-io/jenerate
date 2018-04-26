@@ -14,13 +14,13 @@ func SearchAction() cli.ActionFunc {
 
 	return func(context *cli.Context) error {
 
-		all := context.Bool("all")
+		all := context.Bool(AllFlag)
 
 		if context.NArg() < 1 && !all {
 			return MissingDocumentSearchArgErr
 		}
 
-		cc, err := grpc.Dial(context.GlobalString("registry"), grpc.WithInsecure())
+		cc, err := grpc.Dial(context.GlobalString(RegistryGlobalFlag), grpc.WithInsecure())
 
 		if err != nil {
 			return err
@@ -42,7 +42,7 @@ func SearchAction() cli.ActionFunc {
 			}
 
 			render.GetRenderer(
-				context.String("output")).
+				context.String(OutputFlag)).
 				PrettyPrint(util.JustNameAndVersionFromDocuments(docs))
 			return nil
 		}
@@ -59,7 +59,7 @@ func SearchAction() cli.ActionFunc {
 		fmt.Println("Avaliable versions:")
 
 		render.GetRenderer(
-			context.String("output")).
+			context.String(OutputFlag)).
 			PrettyPrint(docVers)
 
 		return nil
